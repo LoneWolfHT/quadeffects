@@ -1,3 +1,5 @@
+local fire_mod_enabled = minetest.get_modpath("fire")
+
 function qeffects.fire.apply(name, dps, time)
 	local player = minetest.get_player_by_name(name)
 
@@ -17,7 +19,15 @@ function qeffects.fire.apply(name, dps, time)
 		scale     = {x = -100, y = -75},
 	})
 
-	qeffects.fire.players[name] = {dps = dps, time = time, hud = hudkey}
+	local soundkey
+	if fire_mod_enabled then
+		soundkey = minetest.sound_play("fire_fire", {
+			to_player = name,
+			loop = true,
+		})
+	end
+
+	qeffects.fire.players[name] = {dps = dps, time = time, hud = hudkey, sound = soundkey}
 end
 
 function qeffects.fire.remove(name)
@@ -27,6 +37,12 @@ function qeffects.fire.remove(name)
 		player:hud_remove(qeffects.fire.players[name].hud)
 	else
 		minetest.log("warning", "[QEffects:Fire] Player "..name.." not found. Finishing remove()...")
+	end
+
+	if fire_mod_enabled then
+		minetest.sound_stop(qeffects.fire.players[name].sound)
+
+		if player then minetest.sound_play("fire_extinguish_flame", {to_player = name}) end
 	end
 
 	qeffects.fire.players[name] = nil
