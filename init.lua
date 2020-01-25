@@ -2,22 +2,18 @@ qeffects = {
 	fire = {
 		players = {},
 		dps_multiplier = 1
-	}
+	},
+	freeze = {
+		players = {},
+	},
 }
 
-local step = 0
 minetest.register_globalstep(function(dtime)
-	if step < 1 then
-		step = step + dtime
-		return
-	else
-		step = 0
-	end
-
-	qeffects.fire.on_step()
+	qeffects.fire.on_step(dtime)
+	qeffects.freeze.on_step(dtime)
 end)
 
-dofile(minetest.get_modpath("quadeffects").."/fire.lua")
---dofile(minetest.get_modpath("quadeffects").."/freeze.lua")
+dofile(minetest.get_modpath("quadeffects").."/effects/fire.lua")
+dofile(minetest.get_modpath("quadeffects").."/effects/freeze.lua")
 --dofile(minetest.get_modpath("quadeffects").."/stun.lua")
 --dofile(minetest.get_modpath("quadeffects").."/bleed.lua")
